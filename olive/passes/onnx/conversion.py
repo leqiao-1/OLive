@@ -10,7 +10,7 @@ import onnx
 import torch
 
 from olive.evaluator.evaluation import tensor_data_to_device
-from olive.model import ONNXModel, PyTorchModel
+from olive.model import CompositeOnnxModel, ONNXModel, PyTorchModel
 from olive.passes import Pass
 from olive.passes.onnx.common import get_external_data_config, model_proto_to_olive_model
 from olive.passes.pass_config import PassConfigParam
@@ -117,9 +117,7 @@ class OnnxConversion(Pass):
         else:
             self._dynamic_axes = None
 
-    def _run_for_config(self, model: PyTorchModel, config: Dict[str, Any], output_model_path: str) -> ONNXModel:
-        pytorch_model = model.load_model()
-        pytorch_model.eval()
+    def _export_single_model(self, pytorch_model, config: Dict[str, Any], output_model_path: str) -> ONNXModel:
 
         # TODO: add e2e test for model on cpu but data on gpu; model on gpu but data on cpu
         # put pytorch_model and dummy_inputs at the same device
@@ -155,3 +153,19 @@ class OnnxConversion(Pass):
 
         # save the model to the output path and return the model
         return model_proto_to_olive_model(onnx_model, output_model_path, config, model.name)
+
+    def _run_for_config(self, model: PyTorchModel, config: Dict[str, Any], output_model_path: str) -> ONNXModel:
+        pytorch_model = model.load_model()
+        pytorch_model.eval()
+
+        if model.hf_config is None:
+            return self._export_single_model(pytorch_model, config, output_model_path)
+
+        onnx_models = []
+        for c in model.hf_config.components:
+            if c == "encoder":
+                onnx_model = self._export_single_model(pytorch_model.endoer, config, output_model_path)
+            elif c == "decoder":
+                onnx_model = self._export_single_model(pytorch_model.decoder, config, output_model_path)
+            onnx_models.append(model_proto_to_olive_model(onnx_model, output_model_path, config, model.name))
+            return CompositeOnnxModel(onnx_models)
