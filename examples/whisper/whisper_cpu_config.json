@@ -10,13 +10,34 @@
             "model" : "WhisperForConditionalGeneration",
             "path" : "openai/whisper-tiny.en",
             "dataset" : "hf-internal-testing/librispeech_asr_dummy",
-            "components" : ["encoder", "decoder"]
-        },
-        "io_config": {
-            "input_names": ["input_ids", "attention_mask", "token_type_ids"],
-            "input_shapes": [[1, 128], [1, 128], [1, 128]],
-            "input_types": ["int64", "int64", "int64"],
-            "output_names": ["output"]
+            "components" : [
+                { 
+                    "name": "encoder_decoder_init",
+                    "io_config": {
+                        "input_names": ["input_ids", "attention_mask", "token_type_ids"],
+                        "input_shapes": [[1, 128], [1, 128], [1, 128]],
+                        "input_types": ["int64", "int64", "int64"],
+                        "dynamic_axes": {
+                            "input": {"0": "batch_size"},
+                            "output": {"0": "batch_size"}
+                        },
+                        "output_names": ["output"]
+                    }
+                },
+                {
+                    "name": "decoder",
+                    "io_config": {
+                        "input_names": ["input_ids", "attention_mask", "token_type_ids"],
+                        "input_shapes": [[1, 128], [1, 128], [1, 128]],
+                        "input_types": ["int64", "int64", "int64"],
+                        "dynamic_axes": {
+                            "input": {"0": "batch_size"},
+                            "output": {"0": "batch_size"}
+                        },
+                        "output_names": ["output"]
+                    }
+                }
+            ]
         }
     },
     "systems": {
@@ -71,7 +92,14 @@
         },
         "insert_beam_search" : {
             "type" : "InsertBeamSearch"
-        }
+        },
+        "prepost": {
+            "type": "PrePostProcessing",
+            "config": {
+                "pre": [],
+                "post": []
+            }
+        },
         "perf_tuning": {
             "type": "OrtPerfTuning",
             "config": {
