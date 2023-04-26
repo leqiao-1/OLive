@@ -5,8 +5,12 @@
         "config": {
             "model_path": null,
             "model_storage_kind": "folder",
-            "model_loader": "load_pytorch_origin_model",
-            "model_script": "user_script.py"
+        },
+        "hf_config": {
+            "model" : "AutoModelForSequenceClassification",
+            "path" : "Intel/bert-base-uncased-mrpc",
+            "dataset" : "Intel/bert-base-uncased-mrpc",
+            "tokenizer" : "AutoTokenizer"
         }
     },
     "systems": {
@@ -42,23 +46,12 @@
                     "type": "accuracy",
                     "sub_type": "accuracy_score",
                     "priority_rank": 1,
-                    "user_config":{
-                        "post_processing_func": "post_process",
-                        "user_script": "user_script.py",
-                        "dataloader_func": "create_dataloader",
-                        "batch_size": 1
-                    }
                 },
                 {
                     "name": "latency",
                     "type": "latency",
                     "sub_type": "avg",
                     "priority_rank": 2,
-                    "user_config":{
-                        "user_script": "user_script.py",
-                        "dataloader_func": "create_dataloader",
-                        "batch_size": 1
-                    }
                 }
             ],
             "target": "local_system"
