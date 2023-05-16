@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 import olive.cache as cache_utils
-from olive.azureml.azureml_client import AzureMLClient, AzureMLClientConfig
+from olive.azureml.azureml_client import AzureMLClientConfig
 from olive.common.config_utils import ConfigBase, validate_config
 from olive.common.utils import hash_dict
 from olive.engine.footprint import Footprint, FootprintNode, FootprintNodeMetric
@@ -370,7 +370,6 @@ class Engine:
         input_model: OliveModel,
         input_model_id: str,
         accelerator_spec: Any,
-        aml_client: Optional[AzureMLClient] = None,
         packaging_config: Optional[PackagingConfig] = None,
         verbose: bool = False,
         output_dir: str = None,
