@@ -429,7 +429,7 @@ class Engine:
 
             # run all the passes in the step
             should_prune, signal, model_ids = self._run_passes(
-                next_step["passes"], model, model_id, accelerator_spec, aml_client, verbose
+                next_step["passes"], model, model_id, accelerator_spec, verbose
             )
 
             # record feedback signal
