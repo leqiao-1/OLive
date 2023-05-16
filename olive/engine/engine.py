@@ -215,7 +215,6 @@ class Engine:
         self,
         input_model: OliveModel,
         packaging_config: Optional[PackagingConfig] = None,
-        aml_client: Optional[AzureMLClient] = None,
         verbose: bool = False,
         output_dir: str = None,
         output_name: str = None,
@@ -261,12 +260,12 @@ class Engine:
                 outputs[i] = results
             elif self.no_search:
                 output = self.run_no_search(
-                    input_model, input_model_id, i, aml_client, packaging_config, verbose, output_dir, output_name
+                    input_model, input_model_id, i, packaging_config, verbose, output_dir, output_name
                 )
                 outputs[i] = output
             else:
                 footprint = self.run_search(
-                    input_model, input_model_id, i, aml_client, packaging_config, verbose, output_dir, output_name
+                    input_model, input_model_id, i, packaging_config, verbose, output_dir, output_name
                 )
                 outputs[i] = footprint
 
