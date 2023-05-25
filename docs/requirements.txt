@@ -10,3 +10,4 @@ sphinx>=6.1.3
 sphinx-rtd-theme
 sphinx-tabs
 sphinxcontrib-jquery
+onnxruntime
